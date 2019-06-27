@@ -20,12 +20,12 @@ local expected_messages
 local failed_tests = 0
 local FILE
 local LINE
-local init = { publish_key   = pubkey,   -- PUBLISH KEY
-	           subscribe_key = subkey,   -- SUBSCRIBE KEY
-	           secret_key    = nil,      -- SECRET KEY
-	           auth_key      = "abcd",
-	           ssl           = true,     -- ENABLE SSL?
-	           origin        = origin    -- PUBNUB CLOUD ORIGIN
+local init = { publish_key   = pubkey,
+               subscribe_key = subkey,
+               secret_key    = nil,
+               auth_key      = "abcd",
+               ssl           = true,
+               origin        = origin
              }
 
 function __FILE__() return debug.getinfo(2, 'S').source end
@@ -64,7 +64,7 @@ local subscribe_test_callback = function ( message, ch )
 end
 
 local presence = function(message, ch)
-	print ( "presence - " .. ch .. " : " .. ( json.encode(message) or message ) )
+    print ( "presence - " .. ch .. " : " .. ( json.encode(message) or message ) )
 end
 
 local function received_expected_messages( __file__, __line__ )
@@ -95,9 +95,9 @@ local function subscribe_and_check( pn,
            (#expected_messages ~= 0) and
            (os.difftime(os.time(), t0) < time_s)) do
         pn:subscribe ( {
-	        channel  = chan,
+            channel  = chan,
             timetoken = pn:get_timetoken(),
-	        callback = subscribe_test_callback,
+            callback = subscribe_test_callback,
             error = function ( err )
                 transaction_failed(__file__, __line__, err)
             end
@@ -126,8 +126,8 @@ local function fntest_connect_and_send_over_single_channel()
     start_test()
     local pn = pubnub.new ( init )
     pn:subscribe ( {
-	    channel  = chan,
-	    callback = subscribe_test_callback,
+        channel  = chan,
+        callback = subscribe_test_callback,
         error = function ( err )
             transaction_failed(__FILE__(), __LINE__(), err)
         end,
@@ -135,16 +135,16 @@ local function fntest_connect_and_send_over_single_channel()
     } )
     if not test_passing then return end
     pn:publish ( {channel  = chan,
-               	  message  = "test Lua 1",
-	              callback = publish_test_callback,
+                  message  = "test Lua 1",
+                  callback = publish_test_callback,
                   error = function ( response )
                       transaction_failed(__FILE__(), __LINE__(), response)
                   end
                  } )
     if not test_passing then return end
     pn:publish ( {channel  = chan,
-               	  message  = "test Lua 1-2",
-	              callback = publish_test_callback,
+                  message  = "test Lua 1-2",
+                  callback = publish_test_callback,
                   error = function ( response )
                       transaction_failed(__FILE__(), __LINE__(), response)
                   end
@@ -166,8 +166,8 @@ local function fntest_connect_and_send_over_several_channels()
     start_test()
     local pn = pubnub.new ( init )
     pn:subscribe ( {
-	    channel  = chan_1 .. "," .. chan_2,
-	    callback = subscribe_test_callback,
+        channel  = chan_1 .. "," .. chan_2,
+        callback = subscribe_test_callback,
         error = function ( err )
             transaction_failed(__FILE__(), __LINE__(), err)
         end,
@@ -175,16 +175,16 @@ local function fntest_connect_and_send_over_several_channels()
     } )
     if not test_passing then return end
     pn:publish ( {channel  = chan_1,
-               	  message  = "test Lua M1",
-	              callback = publish_test_callback,
+                  message  = "test Lua M1",
+                  callback = publish_test_callback,
                   error = function ( response )
                       transaction_failed(__FILE__(), __LINE__(), response)
                   end
                  } )
     if not test_passing then return end
     pn:publish ( {channel  = chan_2,
-               	  message  = "test Lua M1-2",
-	              callback = publish_test_callback,
+                  message  = "test Lua M1-2",
+                  callback = publish_test_callback,
                   error = function ( response )
                       transaction_failed(__FILE__(), __LINE__(), response)
                   end
@@ -204,19 +204,19 @@ local function fntest_connect_and_receiver_over_single_channel()
     local chan = test_name .. "_" .. math.random(number)
     start_test()
     local pn_1 = pubnub.new ( init )
-    --[[ For defferent pubnub objects 'init' tables must be defferent( locations in memory) --]] 
-    local init_2 = { publish_key   = pubkey,   -- PUBLISH KEY
-	                 subscribe_key = subkey,   -- SUBSCRIBE KEY
-	                 secret_key    = nil,      -- SECRET KEY
-	                 auth_key      = "abcd",
-	                 ssl           = true,     -- ENABLE SSL?
-	                 origin        = origin    -- PUBNUB CLOUD ORIGIN
+    --[[ For different pubnub objects 'init' tables must be different( locations in memory) --]] 
+    local init_2 = { publish_key   = pubkey,
+                     subscribe_key = subkey,
+                     secret_key    = nil,
+                     auth_key      = "abcd",
+                     ssl           = true,
+                     origin        = origin
                    }
     local pn_2 = pubnub.new ( init_2 )
     
     pn_1:subscribe ( {
-	    channel  = chan,
-	    callback = subscribe_test_callback,
+        channel  = chan,
+        callback = subscribe_test_callback,
         error = function ( err )
             transaction_failed(__FILE__(), __LINE__(), err)
         end,
@@ -224,8 +224,8 @@ local function fntest_connect_and_receiver_over_single_channel()
     } )
     if not test_passing then return end
     pn_2:publish ( {channel  = chan,
-               	    message  = "test - 3 - lua",
-	                callback = publish_test_callback,
+                    message  = "test - 3 - lua",
+                    callback = publish_test_callback,
                     error = function ( response )
                         transaction_failed(__FILE__(), __LINE__(), response)
                     end
@@ -234,9 +234,9 @@ local function fntest_connect_and_receiver_over_single_channel()
     expected_messages = { "\"test - 3 - lua\"" }
     expected_channels = nil
     pn_1:subscribe ( {
-	    channel  = chan,
+        channel  = chan,
         timetoken = pn_1:get_timetoken(),
-	    callback = subscribe_test_callback,
+        callback = subscribe_test_callback,
         error = function ( err )
             transaction_failed(__FILE__(), __LINE__(), err)
         end
@@ -250,9 +250,9 @@ local function run_tests()
     fntest_connect_and_send_over_several_channels()
     fntest_connect_and_receiver_over_single_channel()
     if ( failed_tests ~= 0 ) then
-       print( failed_tests .. ((1 == failed_tests) and " test" or " tests") .. " failed." )
+        print( failed_tests .. ((1 == failed_tests) and " test" or " tests") .. " failed." )
     else
-       print( "All(" .. test_index .. ") tests passed." )
+        print( "All(" .. test_index .. ") tests passed." )
     end
 end
 
