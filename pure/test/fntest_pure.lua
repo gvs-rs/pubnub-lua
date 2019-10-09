@@ -128,10 +128,10 @@ local function received_all_expected_messages( t_ctx, subs_file_name, subs_line_
     return t_ctx.test_passing
 end
 
-local function didnt_receive_any_of_expected_messages( t_ctx,
-                                                       control_message_table,
-                                                       subs_file_name,
-                                                       subs_line_num )
+local function received_any_expected_message( t_ctx,
+                                              control_message_table,
+                                              subs_file_name,
+                                              subs_line_num )
     if (t_ctx.test_passing and (#t_ctx.expected_messages ~= #control_message_table)) then
         print ( t_ctx.test_index .. ".test - " .. t_ctx.test_name .. " : failed" ) 
         print(subs_file_name .. ":" .. subs_line_num .. ": " ..
@@ -141,7 +141,7 @@ local function didnt_receive_any_of_expected_messages( t_ctx,
         t_ctx.failed_tests = t_ctx.failed_tests + 1
         t_ctx.test_passing = false
     end
-    return t_ctx.test_passing
+    return not t_ctx.test_passing
 end
 
 local function subscribe_and_check( t_ctx,
@@ -210,10 +210,10 @@ local function subscribe_v2_and_check( t_ctx,
         } )
     end
     if reverse_test then
-       if not didnt_receive_any_of_expected_messages( t_ctx,
-                                                      message_table,
-                                                      subs_file_name,
-                                                      subs_line_num ) then
+       if received_any_expected_message( t_ctx,
+                                         message_table,
+                                         subs_file_name,
+                                         subs_line_num ) then
            return false
        end
     else
@@ -444,7 +444,7 @@ local function fntest_connect_and_receiver_v2_over_single_channel_no_filter( t_c
                             5,
                             nil,
                             { "\"test - 4 - lua\"" , "\"test_signal - 4 - lua\"" },
-                            { [1] = MESSAGE_TYPE_PUBLISHED , [2] = MESSAGE_TYPE_SIGNAL },
+                            { [1] = pn_1:message_type_published() , [2] = pn_1:message_type_signal() },
                             { [1] = chan, [2] = chan },
                             get_file_name(),
                             get_line_num() )
@@ -494,7 +494,7 @@ local function fntest_connect_v2_and_send_over_several_channels_no_filter( t_ctx
                             5,
                             nil,
                             { "\"test Lua M5 signal\"" , "\"test Lua M5 publish\"" },
-                            { [1] = MESSAGE_TYPE_SIGNAL , [2] = MESSAGE_TYPE_PUBLISHED },
+                            { [1] = pn:message_type_signal() , [2] = pn:message_type_published() },
                             { [1] = chan_1, [2] = chan_2 },
                             get_file_name(),
                             get_line_num() )
@@ -544,7 +544,7 @@ local function fntest_connect_v2_and_receive_with_matching_filter_expression( t_
                             5,
                             "pub=='nub'",
                             { "\"test_metadata Lua 6-2\"" },
-                            { [1] = MESSAGE_TYPE_PUBLISHED },
+                            { [1] = pn:message_type_published() },
                             { [1] = chan },
                             get_file_name(),
                             get_line_num() )
@@ -594,7 +594,7 @@ local function fntest_connect_v2_and_receive_with_non_matching_filter_expression
                             5,
                             "pub==7",
                             { "\"test_metadata Lua 7-1\"", "test_signal Lua 7-2" },
-                            { [1] = MESSAGE_TYPE_PUBLISHED, [2] = MESSAGE_TYPE_SIGNAL },
+                            { [1] = pn:message_type_published(), [2] = pn:message_type_signal() },
                             { [1] = chan, [2] = chan },
                             get_file_name(),
                             get_line_num() )

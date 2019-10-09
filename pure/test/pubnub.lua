@@ -57,9 +57,9 @@ function pubnub.base(init)
     local SUB_WINDOWING = 1
     local SUB_TIMEOUT   = 310
     local MINIMAL_HEARTBEAT_INTERVAL = 270
-    MESSAGE_TYPE_PUBLISHED = 0
-    MESSAGE_TYPE_SIGNAL = 1
-    MESSAGE_TYPE_ACTION = 3
+    local MESSAGE_TYPE_PUBLISHED = 0
+    local MESSAGE_TYPE_SIGNAL = 1
+    local MESSAGE_TYPE_ACTION = 3
     local TIMETOKEN     = 0
     local REGION        = 0
     local KEEPALIVE     = 15
@@ -194,6 +194,18 @@ function pubnub.base(init)
                 'channel', _encode(channel), 'leave'
             }, { uuid = self.uuid, auth = self.auth_key })
         })
+    end
+
+    function self:message_type_published()
+        return MESSAGE_TYPE_PUBLISHED
+    end
+
+    function self:message_type_signal()
+        return MESSAGE_TYPE_SIGNAL
+    end
+
+    function self:message_type_action()
+        return MESSAGE_TYPE_ACTION
     end
 
     function self:publish(args)
@@ -508,6 +520,22 @@ function pubnub.base(init)
         methods:CONNECT()
     end
 
+    function self:message_v2_type(message_v2)
+        return message_v2['e']
+    end
+    
+    function self:is_message_v2_published(message_v2)
+        return self:message_v2_type(message_v2) == MESSAGE_TYPE_PUBLISHED
+    end
+
+    function self:is_message_v2_signal(message_v2)
+        return self:message_v2_type(message_v2) == MESSAGE_TYPE_SIGNAL
+    end
+
+    function self:is_message_v2_action(message_v2)
+        return self:message_v2_type(message_v2) == MESSAGE_TYPE_ACTION
+    end
+
     function self:subscribe_v2(args)
         local channel       = args.channel
         local callback      = callback_v2           or args.callback
@@ -523,7 +551,6 @@ function pubnub.base(init)
         local windowing     = args['windowing']     or SUB_WINDOWING
         local restore       = args['restore']       or false
         local filter_expr   = args.filter_expr
-        local treg          = (timetoken ~= 0) and REGION or 0
         local heart_beat    = args['heart_beat']    or MINIMAL_HEARTBEAT_INTERVAL
 
         if not channel then return print("Missing Channel") end
@@ -635,7 +662,7 @@ function pubnub.base(init)
                     "0"
                     },
                     { tt = tostring(TIMETOKEN),
-                      tr = tostring(treg),
+                      tr = tostring(REGION),
                       auth = self.auth_key,
                       ['filter-expr'] = filter_expr,
                       heartbeat = tostring(heart_beat)}),
