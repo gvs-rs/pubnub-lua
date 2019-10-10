@@ -252,6 +252,39 @@ function pubnub.base(init)
         })
     end
 
+    function self:signal(args)
+        local callback = args.callback or function() end
+        local error_cb    = args.error or function() end
+
+        if not (args.channel and args.message) then
+            return callback({ nil, "Missing Channel and/or Message" })
+        end
+
+        local channel   = args.channel
+        local message   = self:json_encode(args.message)
+        local signature = "0"
+
+        -- SIGNAL MESSAGE
+        self:_request({
+            callback = function(response)
+                if not response then
+                    return error_cb({ nil, "Connection Lost" })
+                end
+                callback(response)
+            end,
+            fail = function(response) error_cb(response) end ,
+            url  = build_url({
+                "signal",
+                self.publish_key,
+                self.subscribe_key,
+                signature,
+                _encode(channel),
+                "0",
+                _encode(message)
+            }, { auth = self.auth_key })
+        })
+    end
+
     local function generate_channel_list(channels)
         local list = {}
         each(channels, function(channel)
@@ -289,7 +322,7 @@ function pubnub.base(init)
     function self:subscribe(args)
         local channel       = args.channel
         local callback      = callback              or args.callback
-        local error_cb         = args['error']         or function() end
+        local error_cb      = args['error']         or function() end
         local connect       = args['connect']       or function() end
         local reconnect     = args['reconnect']     or function() end
         local disconnect    = args['disconnect']    or function() end
