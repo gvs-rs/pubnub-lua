@@ -210,7 +210,7 @@ function pubnub.base(init)
 
     function self:publish(args)
         local callback = args.callback or function() end
-        local error_cb = args.error    or function() end
+        local error_cb    = args.error or function() end
 
         if not (args.channel and args.message) then
             return callback({ nil, "Missing Channel and/or Message" })
@@ -523,7 +523,7 @@ function pubnub.base(init)
     function self:message_v2_type(message_v2)
         return message_v2['e']
     end
-    
+
     function self:is_message_v2_published(message_v2)
         return self:message_v2_type(message_v2) == MESSAGE_TYPE_PUBLISHED
     end
@@ -886,7 +886,7 @@ function pubnub.new( init )
 			redirect = true
 		}
 
-		if r==nil or c ~= 200 then return args.fail(table.concat(t)) end
+		if r==nil or c ~= 200 then return args.fail() end
 		message = self:json_decode(table.concat(t))
 
 		if message then
