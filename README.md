@@ -1,10 +1,9 @@
 # Please direct all Support Questions and Concerns to Support@PubNub.com
 
-## PubNub 3.5 Real-time Cloud Push API - for Corona and Moai
+## PubNub 3.6 Real-time Cloud Push API - for Corona and Moai
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 
-###GET YOUR PUBNUB KEYS HERE:
-###http://www.pubnub.com/account#api-keys
+### [GET YOUR PUBNUB KEYS HERE](http://www.pubnub.com/account#api-keys)
 
 PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
@@ -30,6 +29,18 @@ local pubnub_obj = pubnub.new({
 ### Publish
 ```lua
 pubnub_obj:publish({
+    channel = channel,
+    message = text,
+    callback = function(r) --textout(r)
+    end,
+    error = function(r) textout(r)
+    end
+})
+```
+
+### Signal
+```lua
+pubnub_obj:signal({
         channel = channel,
         message = text,
         callback = function(r) --textout(r)
@@ -42,28 +53,28 @@ pubnub_obj:publish({
 
 ### Subscribe
 ```lua
-    pubnub_obj:subscribe({
-        channel = channel,
-        connect = function()
-            textout('Connected to channel ')
-            textout(channel)
-        end,
-        callback = function(message)
-            --print(message.data.message)
-            textout(message)
-        end,
-        error = function()
-            textout("Oh no!!! Dropped 3G Conection!")
-        end,
-    })
+pubnub_obj:subscribe({
+    channel = channel,
+    connect = function()
+        textout('Connected to channel ')
+        textout(channel)
+    end,
+    callback = function(message)
+        --print(message.data.message)
+        textout(message)
+    end,
+    error = function()
+        textout("Oh no!!! Dropped 3G Conection!")
+    end,
+})
 ```
 
 ### Unsubscribe
 ```lua
-    multiplayer:unsubscribe({
-        channel = channel,
-    })
-    textout( 'Disconnected from ' .. channel )
+multiplayer:unsubscribe({
+    channel = channel,
+})
+textout( 'Disconnected from ' .. channel )
 ```
 
 ### Detailed History
