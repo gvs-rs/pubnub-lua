@@ -318,7 +318,7 @@ function pubnub.base(init)
     function self:get_timetoken()
         return TIMETOKEN
     end
-
+    
     function self:subscribe(args)
         local channel       = args.channel
         local callback      = callback              or args.callback
@@ -523,7 +523,7 @@ function pubnub.base(init)
     function self:message_v2_type(message_v2)
         return message_v2['e']
     end
-    
+
     function self:is_message_v2_published(message_v2)
         return self:message_v2_type(message_v2) == MESSAGE_TYPE_PUBLISHED
     end
@@ -679,7 +679,7 @@ function pubnub.base(init)
                         return self:set_timeout(windowing, _connect)
                     end
 
-                    -- Restore previous Connection point if needed
+                    -- Restore previous Connection point
                     TIMETOKEN = response['t']['t']
                     REGION = response['t']['r']
 

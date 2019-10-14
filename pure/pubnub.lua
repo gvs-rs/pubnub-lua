@@ -318,11 +318,11 @@ function pubnub.base(init)
     function self:get_timetoken()
         return TIMETOKEN
     end
-
+    
     function self:subscribe(args)
         local channel       = args.channel
         local callback      = callback              or args.callback
-        local error_cb         = args['error']         or function() end
+        local error_cb      = args['error']         or function() end
         local connect       = args['connect']       or function() end
         local reconnect     = args['reconnect']     or function() end
         local disconnect    = args['disconnect']    or function() end
@@ -523,7 +523,7 @@ function pubnub.base(init)
     function self:message_v2_type(message_v2)
         return message_v2['e']
     end
-    
+
     function self:is_message_v2_published(message_v2)
         return self:message_v2_type(message_v2) == MESSAGE_TYPE_PUBLISHED
     end

@@ -103,7 +103,8 @@ function Hex2Bin(s)
 -- s	-> hexadecimal string
 
 local ret = ""
-local i
+local i = 0
+
 
     for i = 1,string.len(s),1 do
         ret = ret..hex2bin[string.lower(s:sub(i, i))]
